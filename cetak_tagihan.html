@@ -28,81 +28,25 @@
       .invoice-box { border: 1px solid #000; width: 100%; }
     }
 
-    /* Styling Khusus Tampilan Handphone / Layar Kecil */
     @media screen and (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
-      
-      .sidebar {
-        width: 100% !important;
-        padding: 10px 0;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-      }
-      
-      .sidebar h3 {
-        width: 100%;
-        margin-bottom: 10px;
-        font-size: 14px;
-      }
-      
-      .menu-item {
-        padding: 8px 10px;
-        font-size: 12px;
-        border-left: none !important;
-        border-bottom: 2px solid transparent;
-      }
-      
-      .menu-item:hover, .menu-item.active {
-        border-bottom: 2px solid #38bdf8;
-        background: #334155;
-      }
-      
-      .content {
-        padding: 10px;
-      }
-      
-      .card {
-        padding: 15px;
-      }
-      
-      .form-group input, .form-group select {
-        max-width: 100% !important;
-      }
-
-      /* Tambahan: Penyesuaian Kotak Nota di HP agar bisa di-scroll jika melebihi layar */
-      .invoice-box {
-        padding: 10px;
-        overflow-x: auto;
-      }
-
-      .invoice-header {
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .invoice-header div:nth-child(2) {
-        text-align: left !important;
-      }
-
-      table {
-        display: table; /* Tetap menjaga struktur tabel nota */
-        width: 100%;
-      }
-
-      .summary-cards {
-        flex-direction: column;
-      }
+      body { flex-direction: column; }
+      .sidebar { width: 100% !important; padding: 10px 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+      .sidebar h3 { width: 100%; margin-bottom: 10px; font-size: 14px; }
+      .menu-item { padding: 8px 10px; font-size: 12px; border-left: none !important; border-bottom: 2px solid transparent; }
+      .menu-item:hover, .menu-item.active { border-bottom: 2px solid #38bdf8; background: #334155; }
+      .content { padding: 10px; }
+      .card { padding: 15px; }
+      .invoice-box { padding: 10px; overflow-x: auto; }
+      .invoice-header { flex-direction: column; gap: 10px; }
+      .invoice-header div:nth-child(2) { text-align: left !important; }
+      table { display: table; width: 100%; }
     }
   </style>
 </head>
 <body>
   <nav class="sidebar">
     <h3>VOUCHER SYSTEM</h3>
-    <a href="reseller.html" class="menu-item">Master Reseller & Harga</a>
+    <a href="index.html" class="menu-item">Master Reseller & Harga</a>
     <a href="order.html" class="menu-item">Input & Cetak Order Baru</a>
     <a href="penagihan.html" class="menu-item">Penagihan Bulanan</a>
     <a href="cetak_tagihan.html" class="menu-item active">Cetak Tagihan</a>

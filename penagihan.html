@@ -24,68 +24,24 @@
     .btn:hover { background: #0369a1; }
     .btn-reset { background: #dc2626; margin-left: 10px; }
     .btn-reset:hover { background: #b91c1c; }
-		/* Styling Khusus Tampilan Handphone / Layar Kecil */
-	@media screen and (max-width: 768px) {
-	  body {
-		flex-direction: column; /* Mengubah sidebar & konten dari samping ke atas-bawah */
-	  }
-	  
-	  .sidebar {
-		width: 100% !important;
-		padding: 10px 0;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		align-items: center;
-	  }
-	  
-	  .sidebar h3 {
-		width: 100%;
-		margin-bottom: 10px;
-		font-size: 14px;
-	  }
-	  
-	  .menu-item {
-		padding: 8px 10px;
-		font-size: 12px;
-		border-left: none !important;
-		border-bottom: 2px solid transparent;
-	  }
-	  
-	  .menu-item:hover, .menu-item.active {
-		border-bottom: 2px solid #38bdf8;
-		background: #334155;
-	  }
-	  
-	  .content {
-		padding: 10px;
-	  }
-	  
-	  .card {
-		padding: 15px;
-	  }
-	  
-	  .form-group input, .form-group select {
-		max-width: 100% !important; /* Form memenuhi lebar layar HP */
-	  }
-	  
-	  /* Membuat Tabel Bisa Di-scroll Kesamping jika Terlalu Lebar */
-	  table {
-		display: block;
-		overflow-x: auto;
-		white-space: nowrap;
-	  }
 
-	  .summary-cards {
-		flex-direction: column; /* Kartu statistik disusun ke bawah */
-	  }
-	}
+    @media screen and (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100% !important; padding: 10px 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+      .sidebar h3 { width: 100%; margin-bottom: 10px; font-size: 14px; }
+      .menu-item { padding: 8px 10px; font-size: 12px; border-left: none !important; border-bottom: 2px solid transparent; }
+      .menu-item:hover, .menu-item.active { border-bottom: 2px solid #38bdf8; background: #334155; }
+      .content { padding: 10px; }
+      .card { padding: 15px; }
+      .form-group input, .form-group select { max-width: 100% !important; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
   </style>
 </head>
 <body>
   <nav class="sidebar">
     <h3>VOUCHER SYSTEM</h3>
-    <a href="reseller.html" class="menu-item">Master Reseller & Harga</a>
+    <a href="index.html" class="menu-item">Master Reseller & Harga</a>
     <a href="order.html" class="menu-item">Input & Cetak Order Baru</a>
     <a href="penagihan.html" class="menu-item active">Penagihan Bulanan</a>
     <a href="cetak_tagihan.html" class="menu-item">Cetak Tagihan</a>
@@ -169,7 +125,6 @@
       let lastTagihan = tagihanList.filter(t => cleanResellerName(t.reseller) === targetReseller).pop();
       let tagihanTime = lastTagihan && lastTagihan.timestamp ? lastTagihan.timestamp : (lastTagihan ? new Date(lastTagihan.tanggal).getTime() : 0);
 
-      // Ambil SEMUA order reseller ini yang masuk setelah penagihan terakhir
       let unbilledOrders = orders.filter(o => {
         let oTime = o.timestamp ? o.timestamp : new Date(o.tgl).getTime();
         return cleanResellerName(o.reseller) === targetReseller && oTime > tagihanTime;
@@ -195,7 +150,6 @@
         });
       }
 
-      // Filter hanya jenis voucher yang memiliki stok titipan > 0
       let jenisKeys = Object.keys(stokMap).filter(jenis => stokMap[jenis] > 0);
 
       if (jenisKeys.length === 0) {
@@ -291,7 +245,6 @@
       window.location.href = 'cetak_tagihan.html';
     }
 
-    // FUNGSI RESET SPESIFIK HANYA UNTUK RESELLER YANG SEDANG DIPILIH
     function resetTransaksiResellerIni() {
       let rawReseller = document.getElementById('sel_reseller').value;
       let targetReseller = cleanResellerName(rawReseller);
@@ -304,7 +257,6 @@
         let orders = JSON.parse(localStorage.getItem('sys_orders')) || [];
         let tagihanList = JSON.parse(localStorage.getItem('sys_penagihan')) || [];
 
-        // Filter data, buang hanya transaksi milik reseller yang dipilih
         let filteredOrders = orders.filter(o => cleanResellerName(o.reseller) !== targetReseller);
         let filteredTagihan = tagihanList.filter(t => cleanResellerName(t.reseller) !== targetReseller);
 

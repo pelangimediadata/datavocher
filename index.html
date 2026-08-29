@@ -21,7 +21,6 @@
     .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; }
     .form-group input { width: 100%; max-width: 350px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
     
-    /* Styles Tombol */
     .btn { background: #0284c7; color: white; padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; }
     .btn:hover { background: #0369a1; }
     .btn-add { background: #16a34a; }
@@ -39,60 +38,17 @@
     th { background: #e2e8f0; }
     td.center { text-align: center; }
 
-    /* Styling Khusus Tampilan Handphone / Layar Kecil */
     @media screen and (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
-      
-      .sidebar {
-        width: 100% !important;
-        padding: 10px 0;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-      }
-      
-      .sidebar h3 {
-        width: 100%;
-        margin-bottom: 10px;
-        font-size: 14px;
-      }
-      
-      .menu-item {
-        padding: 8px 10px;
-        font-size: 12px;
-        border-left: none !important;
-        border-bottom: 2px solid transparent;
-      }
-      
-      .menu-item:hover, .menu-item.active {
-        border-bottom: 2px solid #38bdf8;
-        background: #334155;
-      }
-      
-      .content {
-        padding: 10px;
-      }
-      
-      .card {
-        padding: 15px;
-      }
-      
-      .form-group input, .form-group select {
-        max-width: 100% !important;
-      }
-      
-      table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-
-      .summary-cards {
-        flex-direction: column;
-      }
+      body { flex-direction: column; }
+      .sidebar { width: 100% !important; padding: 10px 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+      .sidebar h3 { width: 100%; margin-bottom: 10px; font-size: 14px; }
+      .menu-item { padding: 8px 10px; font-size: 12px; border-left: none !important; border-bottom: 2px solid transparent; }
+      .menu-item:hover, .menu-item.active { border-bottom: 2px solid #38bdf8; background: #334155; }
+      .content { padding: 10px; }
+      .card { padding: 15px; }
+      .form-group input, .form-group select { max-width: 100% !important; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .summary-cards { flex-direction: column; }
     }
   </style>
 </head>
@@ -107,7 +63,6 @@
   </nav>
 
   <main class="content">
-    <!-- 1. MASTER DATA RESELLER -->
     <div class="card">
       <div class="card-header">
         <h2 id="title_reseller">Master Data Reseller</h2>
@@ -138,7 +93,6 @@
       </table>
     </div>
 
-    <!-- 2. MASTER HARGA VOUCHER -->
     <div class="card">
       <div class="card-header">
         <h2 id="title_voucher">Master Harga Voucher (Jual vs Modal)</h2>

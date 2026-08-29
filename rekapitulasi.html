@@ -38,69 +38,25 @@
       body, .content, .card { background: none; padding: 0; margin: 0; box-shadow: none; }
       .printable-report { border: 1px solid #000; padding: 15px; }
     }
-		/* Styling Khusus Tampilan Handphone / Layar Kecil */
-	@media screen and (max-width: 768px) {
-	  body {
-		flex-direction: column; /* Mengubah sidebar & konten dari samping ke atas-bawah */
-	  }
-	  
-	  .sidebar {
-		width: 100% !important;
-		padding: 10px 0;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		align-items: center;
-	  }
-	  
-	  .sidebar h3 {
-		width: 100%;
-		margin-bottom: 10px;
-		font-size: 14px;
-	  }
-	  
-	  .menu-item {
-		padding: 8px 10px;
-		font-size: 12px;
-		border-left: none !important;
-		border-bottom: 2px solid transparent;
-	  }
-	  
-	  .menu-item:hover, .menu-item.active {
-		border-bottom: 2px solid #38bdf8;
-		background: #334155;
-	  }
-	  
-	  .content {
-		padding: 10px;
-	  }
-	  
-	  .card {
-		padding: 15px;
-	  }
-	  
-	  .form-group input, .form-group select {
-		max-width: 100% !important; /* Form memenuhi lebar layar HP */
-	  }
-	  
-	  /* Membuat Tabel Bisa Di-scroll Kesamping jika Terlalu Lebar */
-	  table {
-		display: block;
-		overflow-x: auto;
-		white-space: nowrap;
-	  }
 
-	  .summary-cards {
-		flex-direction: column; /* Kartu statistik disusun ke bawah */
-	  }
-	}
+    @media screen and (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100% !important; padding: 10px 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+      .sidebar h3 { width: 100%; margin-bottom: 10px; font-size: 14px; }
+      .menu-item { padding: 8px 10px; font-size: 12px; border-left: none !important; border-bottom: 2px solid transparent; }
+      .menu-item:hover, .menu-item.active { border-bottom: 2px solid #38bdf8; background: #334155; }
+      .content { padding: 10px; }
+      .card { padding: 15px; }
+      .form-group input, .form-group select { max-width: 100% !important; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+      .summary-cards { flex-direction: column; }
+    }
   </style>
 </head>
 <body>
-  <!-- Sidebar Navigasi -->
   <nav class="sidebar">
     <h3>VOUCHER SYSTEM</h3>
-    <a href="reseller.html" class="menu-item">Master Reseller & Harga</a>
+    <a href="index.html" class="menu-item">Master Reseller & Harga</a>
     <a href="order.html" class="menu-item">Input & Cetak Order Baru</a>
     <a href="penagihan.html" class="menu-item">Penagihan Bulanan</a>
     <a href="cetak_tagihan.html" class="menu-item">Cetak Tagihan</a>
@@ -111,7 +67,6 @@
     <div class="card printable-report">
       <h2>Laporan Rekapitulasi Penjualan</h2><br>
 
-      <!-- Panel Filter -->
       <div class="filter-box">
         <div class="form-group">
           <label>Pilih Reseller</label>
@@ -133,7 +88,6 @@
         </div>
       </div>
 
-      <!-- Ringkasan Statistik -->
       <div class="summary-cards">
         <div class="summary-card">
           <h4>Total Transaksi Penagihan</h4>
@@ -149,7 +103,6 @@
         </div>
       </div>
 
-      <!-- Tabel Detail Rekapitulasi -->
       <table>
         <thead>
           <tr>
@@ -185,14 +138,12 @@
     }
 
     function initPage() {
-      // Set default tanggal ke bulan berjalan
       let date = new Date();
       let firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
       
       document.getElementById('filter_tgl_mulai').valueAsDate = firstDay;
       document.getElementById('filter_tgl_selesai').valueAsDate = date;
 
-      // Populate Pilihan Reseller
       let resList = JSON.parse(localStorage.getItem('sys_reseller')) || [];
       let sel = document.getElementById('filter_reseller');
       resList.forEach(r => {
@@ -212,7 +163,6 @@
 
       let tagihanList = JSON.parse(localStorage.getItem('sys_penagihan')) || [];
 
-      // Filter berdasarkan Tanggal dan Reseller
       let filteredData = tagihanList.filter(item => {
         let tglTagihan = item.tanggal;
         let matchTanggal = true;
@@ -273,7 +223,6 @@
         `;
       }).join('');
 
-      // Update Ringkasan Kartu & Tfoot
       document.getElementById('stat_total_trx').innerText = filteredData.length + ' Trx';
       document.getElementById('stat_total_laku').innerText = grandTotalLaku.toLocaleString('id-ID') + ' Pcs';
       document.getElementById('stat_total_pendapatan').innerText = 'Rp ' + grandTotalPendapatan.toLocaleString('id-ID');

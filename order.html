@@ -29,12 +29,10 @@
     .btn-delete { background: #dc2626; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
     .btn-delete:hover { background: #b91c1c; }
 
-    /* STYLE KARTU RIWAYAT ORDER TERAKHIR */
     .last-order-box { background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #0284c7; padding: 15px; border-radius: 6px; margin-top: 25px; }
     .last-order-box h4 { margin: 0 0 10px 0; color: #1e293b; font-size: 14px; display: flex; justify-content: space-between; }
     .last-order-box table th { background: #cbd5e1; }
 
-    /* ELEMEN KOP SURAT & TAMPILAN CETAK */
     .company-header { display: none; margin-bottom: 20px; border-bottom: 3px double #000; padding-bottom: 10px; }
     .company-header .company-title { font-size: 22px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #0284c7; }
     .company-header .company-sub { font-size: 12px; color: #475569; margin-top: 3px; }
@@ -50,84 +48,36 @@
       body * { visibility: hidden; }
       .sidebar, .btn, .no-print, h2 { display: none !important; }
       body, .content, .card { background: none; padding: 0; margin: 0; box-shadow: none; }
-      
       .printable, .printable * { visibility: visible; }
       .printable { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
-      
       .company-header { display: flex; justify-content: space-between; align-items: flex-end; }
       .print-info-table { display: table; }
       .form-group, .last-order-box { display: none !important; }
       .signature-area { display: flex; }
-      
       .sel-vch, table input { display: none !important; }
       .print-only-text { display: inline-block !important; font-weight: bold; }
-
       table th { background: #d9d9d9 !important; color: #000; font-weight: bold; }
       table, th, td { border: 1px solid #000 !important; }
       .btn-delete-col { display: none !important; }
     }
-		/* Styling Khusus Tampilan Handphone / Layar Kecil */
-	@media screen and (max-width: 768px) {
-	  body {
-		flex-direction: column; /* Mengubah sidebar & konten dari samping ke atas-bawah */
-	  }
-	  
-	  .sidebar {
-		width: 100% !important;
-		padding: 10px 0;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		align-items: center;
-	  }
-	  
-	  .sidebar h3 {
-		width: 100%;
-		margin-bottom: 10px;
-		font-size: 14px;
-	  }
-	  
-	  .menu-item {
-		padding: 8px 10px;
-		font-size: 12px;
-		border-left: none !important;
-		border-bottom: 2px solid transparent;
-	  }
-	  
-	  .menu-item:hover, .menu-item.active {
-		border-bottom: 2px solid #38bdf8;
-		background: #334155;
-	  }
-	  
-	  .content {
-		padding: 10px;
-	  }
-	  
-	  .card {
-		padding: 15px;
-	  }
-	  
-	  .form-group input, .form-group select {
-		max-width: 100% !important; /* Form memenuhi lebar layar HP */
-	  }
-	  
-	  /* Membuat Tabel Bisa Di-scroll Kesamping jika Terlalu Lebar */
-	  table {
-		display: block;
-		overflow-x: auto;
-		white-space: nowrap;
-	  }
 
-	  .summary-cards {
-		flex-direction: column; /* Kartu statistik disusun ke bawah */
-	  }
-	}
+    @media screen and (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100% !important; padding: 10px 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+      .sidebar h3 { width: 100%; margin-bottom: 10px; font-size: 14px; }
+      .menu-item { padding: 8px 10px; font-size: 12px; border-left: none !important; border-bottom: 2px solid transparent; }
+      .menu-item:hover, .menu-item.active { border-bottom: 2px solid #38bdf8; background: #334155; }
+      .content { padding: 10px; }
+      .card { padding: 15px; }
+      .form-group input, .form-group select { max-width: 100% !important; }
+      table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
   </style>
 </head>
 <body>
   <nav class="sidebar">
     <h3>VOUCHER SYSTEM</h3>
-    <a href="reseller.html" class="menu-item">Master Reseller & Harga</a>
+    <a href="index.html" class="menu-item">Master Reseller & Harga</a>
     <a href="order.html" class="menu-item active">Input & Cetak Order Baru</a>
     <a href="penagihan.html" class="menu-item">Penagihan Bulanan</a>
     <a href="cetak_tagihan.html" class="menu-item">Cetak Tagihan</a>
@@ -136,7 +86,6 @@
 
   <main class="content">
     <div class="card printable">
-      <!-- KOP PERUSAHAAN (Saat Cetak) -->
       <div class="company-header">
         <div>
           <div class="company-title">APRILNET WIFI SYSTEM</div>
@@ -163,7 +112,6 @@
         </tr>
       </table>
 
-      <!-- Form Input Aplikasi -->
       <div class="form-group">
         <label>Tanggal Order</label>
         <input type="date" id="tgl_order" onchange="syncPrintHeader()">
@@ -189,13 +137,10 @@
             <th class="no-print btn-delete-col" style="width: 10%;">Aksi</th>
           </tr>
         </thead>
-        <tbody id="tb_order_items">
-          <!-- Dynamic Row -->
-        </tbody>
+        <tbody id="tb_order_items"></tbody>
       </table>
       <br>
 
-      <!-- TABEL RIWAYAT ORDER TERAKHIR (OTOMATIS TAMPIL JIKA BELUM DITAGIH, HILANG JIKA SUDAH DITAGIH) -->
       <div class="last-order-box no-print" id="box_last_order" style="display:none;">
         <h4>
           <span>Riwayat Order Terakhir yang Belum Ditagihkan</span>
@@ -215,7 +160,6 @@
         </table>
       </div>
 
-      <!-- Area Tanda Tangan Cetak -->
       <div class="signature-area">
         <div class="sig-box">
           <p>Penerima / Reseller</p>
@@ -366,7 +310,6 @@
       syncRowText(elem);
     }
 
-    // MEMUAT DAN MENAMPILKAN TABEL RIWAYAT ORDER TERAKHIR (Otomatis Hilang jika sudah ditagih)
     function renderLastOrderTable() {
       let rawReseller = document.getElementById('sel_reseller').value;
       let targetReseller = cleanResellerName(rawReseller);
