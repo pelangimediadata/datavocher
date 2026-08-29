@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Input Order Baru - Sistem Voucher</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    body { display: flex; background: #f4f6f9; min-height: 100vh; }
+    .sidebar { width: 230px; background: #1e293b; color: #fff; padding: 20px 0; flex-shrink: 0; }
+    .sidebar h3 { text-align: center; margin-bottom: 25px; color: #38bdf8; font-size: 16px; }
+    .menu-item { display: block; padding: 12px 20px; color: #cbd5e1; text-decoration: none; font-size: 14px; }
+    .menu-item:hover, .menu-item.active { background: #334155; color: #fff; border-left: 4px solid #38bdf8; }
+    .content { flex: 1; padding: 25px; }
+    .card { background: white; padding: 25px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; }
+    .form-group input, .form-group select { width: 100%; max-width: 400px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: center; }
+    th { background: #e2e8f0; }
+    table input, table select { width: 95%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+    .btn { background: #0284c7; color: white; padding: 9px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; }
+    .btn:hover { background: #0369a1; }
+    .btn-add { background: #16a34a; }
+    .btn-add:hover { background: #15803d; }
+    .btn-print { background: #475569; }
+    .btn-print:hover { background: #334155; }
+    .btn-delete { background: #dc2626; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .btn-delete:hover { background: #b91c1c; }
+
+    /* STYLE KARTU RIWAYAT ORDER TERAKHIR */
+    .last-order-box { background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #0284c7; padding: 15px; border-radius: 6px; margin-top: 25px; }
+    .last-order-box h4 { margin: 0 0 10px 0; color: #1e293b; font-size: 14px; display: flex; justify-content: space-between; }
+    .last-order-box table th { background: #cbd5e1; }
+
+    /* ELEMEN KOP SURAT & TAMPILAN CETAK */
+    .company-header { display: none; margin-bottom: 20px; border-bottom: 3px double #000; padding-bottom: 10px; }
+    .company-header .company-title { font-size: 22px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #0284c7; }
+    .company-header .company-sub { font-size: 12px; color: #475569; margin-top: 3px; }
+    .print-info-table { display: none; width: 100%; margin-bottom: 15px; border-collapse: collapse; }
+    .print-info-table td { border: none; text-align: left; padding: 3px 0; font-size: 13px; }
+    
+    .signature-area { display: none; margin-top: 40px; justify-content: space-between; text-align: center; font-size: 13px; }
+    .sig-box { width: 180px; }
+
+    .print-only-text { display: none; }
+
+    @media print {
+      body * { visibility: hidden; }
+      .sidebar, .btn, .no-print, h2 { display: none !important; }
+      body, .content, .card { background: none; padding: 0; margin: 0; box-shadow: none; }
+      
+      .printable, .printable * { visibility: visible; }
+      .printable { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+      
+      .company-header { display: flex; justify-content: space-between; align-items: flex-end; }
+      .print-info-table { display: table; }
+      .form-group, .last-order-box { display: none !important; }
+      .signature-area { display: flex; }
+      
+      .sel-vch, table input { display: none !important; }
+      .print-only-text { display: inline-block !important; font-weight: bold; }
+
+      table th { background: #d9d9d9 !important; color: #000; font-weight: bold; }
+      table, th, td { border: 1px solid #000 !important; }
+      .btn-delete-col { display: none !important; }
+    }
+		/* Styling Khusus Tampilan Handphone / Layar Kecil */
+	@media screen and (max-width: 768px) {
+	  body {
+		flex-direction: column; /* Mengubah sidebar & konten dari samping ke atas-bawah */
+	  }
+	  
+	  .sidebar {
+		width: 100% !important;
+		padding: 10px 0;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+	  }
+	  
+	  .sidebar h3 {
+		width: 100%;
+		margin-bottom: 10px;
+		font-size: 14px;
+	  }
+	  
+	  .menu-item {
+		padding: 8px 10px;
+		font-size: 12px;
+		border-left: none !important;
+		border-bottom: 2px solid transparent;
+	  }
+	  
+	  .menu-item:hover, .menu-item.active {
+		border-bottom: 2px solid #38bdf8;
+		background: #334155;
+	  }
+	  
+	  .content {
+		padding: 10px;
+	  }
+	  
+	  .card {
+		padding: 15px;
+	  }
+	  
+	  .form-group input, .form-group select {
+		max-width: 100% !important; /* Form memenuhi lebar layar HP */
+	  }
+	  
+	  /* Membuat Tabel Bisa Di-scroll Kesamping jika Terlalu Lebar */
+	  table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+	  }
+
+	  .summary-cards {
+		flex-direction: column; /* Kartu statistik disusun ke bawah */
+	  }
+	}
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <h3>VOUCHER SYSTEM</h3>
+    <a href="reseller.html" class="menu-item">Master Reseller & Harga</a>
+    <a href="order.html" class="menu-item active">Input & Cetak Order Baru</a>
+    <a href="penagihan.html" class="menu-item">Penagihan Bulanan</a>
+    <a href="cetak_tagihan.html" class="menu-item">Cetak Tagihan</a>
+    <a href="rekapitulasi.html" class="menu-item">Rekapitulasi Penjualan</a>
+  </nav>
+
+  <main class="content">
+    <div class="card printable">
+      <!-- KOP PERUSAHAAN (Saat Cetak) -->
+      <div class="company-header">
+        <div>
+          <div class="company-title">APRILNET WIFI SYSTEM</div>
+          <div class="company-sub">Layanan Internet & Distribusi Voucher Hotspot</div>
+        </div>
+        <div style="text-align: right; font-size: 12px; color: #333;">
+          <b>NOTA PENITIPAN VOUCHER</b><br>
+          No. Ref: <span id="print_no_ref">-</span>
+        </div>
+      </div>
+
+      <h2>Penitipan / Order Voucher Baru</h2><br>
+
+      <table class="print-info-table">
+        <tr>
+          <td style="width: 120px;"><b>Tanggal Order</b></td>
+          <td style="width: 10px;">:</td>
+          <td><span id="p_tgl_order">-</span></td>
+        </tr>
+        <tr>
+          <td><b>Nama Reseller</b></td>
+          <td>:</td>
+          <td><span id="p_nama_reseller">-</span></td>
+        </tr>
+      </table>
+
+      <!-- Form Input Aplikasi -->
+      <div class="form-group">
+        <label>Tanggal Order</label>
+        <input type="date" id="tgl_order" onchange="syncPrintHeader()">
+      </div>
+
+      <div class="form-group">
+        <label>Nama Reseller</label>
+        <select id="sel_reseller" onchange="cekSisaLama(); syncPrintHeader(); renderLastOrderTable();">
+          <option value="">-- Pilih Reseller --</option>
+        </select>
+      </div>
+
+      <div id="info_sisa" class="no-print" style="margin-bottom: 15px; font-size: 13px; color: #0284c7; font-weight: bold;"></div>
+
+      <h3>Item Order Voucher</h3>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 35%;">Detail & Nama Jenis Voucher</th>
+            <th style="width: 18%;">Sisa / Stok Lalu (Pcs)</th>
+            <th style="width: 18%;">Order Baru (Pcs)</th>
+            <th style="width: 19%;">Total Stok Dititip</th>
+            <th class="no-print btn-delete-col" style="width: 10%;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tb_order_items">
+          <!-- Dynamic Row -->
+        </tbody>
+      </table>
+      <br>
+
+      <!-- TABEL RIWAYAT ORDER TERAKHIR (OTOMATIS TAMPIL JIKA BELUM DITAGIH, HILANG JIKA SUDAH DITAGIH) -->
+      <div class="last-order-box no-print" id="box_last_order" style="display:none;">
+        <h4>
+          <span>Riwayat Order Terakhir yang Belum Ditagihkan</span>
+          <span id="last_order_date" style="color:#0284c7;">-</span>
+        </h4>
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Jenis Voucher</th>
+              <th>Sisa Lalu</th>
+              <th>Order Ditambahkan</th>
+              <th>Total Stok Titipan</th>
+            </tr>
+          </thead>
+          <tbody id="tb_last_order_body"></tbody>
+        </table>
+      </div>
+
+      <!-- Area Tanda Tangan Cetak -->
+      <div class="signature-area">
+        <div class="sig-box">
+          <p>Penerima / Reseller</p>
+          <br><br><br>
+          <p>( ____________________ )</p>
+        </div>
+        <div class="sig-box">
+          <p>Pengirim / Admin</p>
+          <br><br><br>
+          <p>( ____________________ )</p>
+        </div>
+      </div>
+
+      <br>
+      <button class="btn btn-add no-print" onclick="tambahBarisOrder()">+ Tambah Jenis Voucher</button>
+      <br><br><hr class="no-print"><br>
+      <button class="btn no-print" onclick="simpanOrder(true)">Simpan Data Order</button>
+      <button class="btn btn-print no-print" onclick="prosesCetak()">Cetak Order Baru</button>
+    </div>
+  </main>
+
+  <script>
+    let masterVoucher = [];
+
+    function cleanResellerName(name) {
+      if (!name) return "";
+      return name.split('(')[0].trim().toLowerCase();
+    }
+
+    function initPage() {
+      document.getElementById('tgl_order').valueAsDate = new Date();
+      let res = JSON.parse(localStorage.getItem('sys_reseller')) || [];
+      let sel = document.getElementById('sel_reseller');
+      sel.innerHTML = '<option value="">-- Pilih Reseller --</option>' + res.map(r => `<option value="${r.nama}">${r.nama} (${r.lokasi})</option>`).join('');
+
+      masterVoucher = JSON.parse(localStorage.getItem('sys_voucher')) || [];
+      tambahBarisOrder();
+      syncPrintHeader();
+    }
+
+    function syncPrintHeader() {
+      let tgl = document.getElementById('tgl_order').value;
+      let resellerText = document.getElementById('sel_reseller').options[document.getElementById('sel_reseller').selectedIndex]?.text || '-';
+      
+      document.getElementById('p_tgl_order').innerText = tgl ? new Date(tgl).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) : '-';
+      document.getElementById('p_nama_reseller').innerText = resellerText !== '-- Pilih Reseller --' ? resellerText : '-';
+      document.getElementById('print_no_ref').innerText = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+    }
+
+    function tambahBarisOrder() {
+      let tbody = document.getElementById('tb_order_items');
+      let tr = document.createElement('tr');
+      tr.className = 'item-row';
+      tr.innerHTML = `
+        <td style="text-align:left;">
+          <select class="sel-vch" onchange="hitungRow(this); syncRowText(this);">
+            <option value="">-- Pilih Voucher --</option>
+            ${masterVoucher.map(v => `<option value="${v.jenis}">${v.jenis} (Jual: Rp ${v.jual.toLocaleString('id-ID')})</option>`).join('')}
+          </select>
+          <span class="print-only-text txt-jenis">-</span>
+        </td>
+        <td>
+          <input type="number" class="sisa-lalu" value="0" readonly>
+          <span class="print-only-text txt-sisa">0 Pcs</span>
+        </td>
+        <td>
+          <input type="number" class="qty-baru" value="0" oninput="hitungRow(this); syncRowText(this);">
+          <span class="print-only-text txt-baru">0 Pcs</span>
+        </td>
+        <td>
+          <input type="number" class="total-stok" value="0" readonly>
+          <span class="print-only-text txt-total">0 Pcs</span>
+        </td>
+        <td class="no-print btn-delete-col"><button class="btn-delete" onclick="hapusBaris(this)">Hapus</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function syncRowText(elem) {
+      let tr = elem.closest('tr');
+      let selObj = tr.querySelector('.sel-vch');
+      let jenisText = selObj.options[selObj.selectedIndex]?.text || '-';
+      
+      let sisa = tr.querySelector('.sisa-lalu').value || '0';
+      let baru = tr.querySelector('.qty-baru').value || '0';
+      let total = tr.querySelector('.total-stok').value || '0';
+
+      tr.querySelector('.txt-jenis').innerText = jenisText !== '-- Pilih Voucher --' ? jenisText : '-';
+      tr.querySelector('.txt-sisa').innerText = sisa + ' Pcs';
+      tr.querySelector('.txt-baru').innerText = baru + ' Pcs';
+      tr.querySelector('.txt-total').innerText = total + ' Pcs';
+    }
+
+    function hapusBaris(btn) {
+      let tbody = document.getElementById('tb_order_items');
+      if (tbody.querySelectorAll('tr').length > 1) {
+        btn.closest('tr').remove();
+      } else {
+        alert("Minimal harus ada 1 jenis voucher!");
+      }
+    }
+
+    function cekSisaLama() {
+      let reseller = document.getElementById('sel_reseller').value;
+      if (!reseller) return;
+      document.querySelectorAll('.item-row').forEach(tr => {
+        hitungRow(tr.querySelector('.sel-vch'));
+        syncRowText(tr.querySelector('.sel-vch'));
+      });
+    }
+
+    function hitungRow(elem) {
+      let tr = elem.closest('tr');
+      let rawReseller = document.getElementById('sel_reseller').value;
+      let targetReseller = cleanResellerName(rawReseller);
+      let jenis = tr.querySelector('.sel-vch').value;
+      
+      let sisaLalu = 0;
+      if (targetReseller && jenis) {
+        let orders = JSON.parse(localStorage.getItem('sys_orders')) || [];
+        let tagihanList = JSON.parse(localStorage.getItem('sys_penagihan')) || [];
+
+        let lastTagihan = tagihanList.filter(t => cleanResellerName(t.reseller) === targetReseller).pop();
+        let tagihanTime = lastTagihan && lastTagihan.timestamp ? lastTagihan.timestamp : (lastTagihan ? new Date(lastTagihan.tanggal).getTime() : 0);
+
+        let unbilledOrders = orders.filter(o => {
+          let oTime = o.timestamp ? o.timestamp : new Date(o.tgl).getTime();
+          return cleanResellerName(o.reseller) === targetReseller && oTime > tagihanTime;
+        });
+
+        if (orders.length === 0) {
+          sisaLalu = 0;
+        } else if (unbilledOrders.length > 0) {
+          unbilledOrders.forEach(o => {
+            let foundItem = o.items.find(i => i.jenis === jenis);
+            if (foundItem) sisaLalu += foundItem.qtyBaru;
+          });
+        } else if (lastTagihan && lastTagihan.items) {
+          let itemLama = lastTagihan.items.find(i => i.jenis === jenis);
+          if (itemLama) sisaLalu = itemLama.sisa;
+        }
+      }
+
+      tr.querySelector('.sisa-lalu').value = sisaLalu;
+      let qtyBaru = parseFloat(tr.querySelector('.qty-baru').value) || 0;
+      tr.querySelector('.total-stok').value = sisaLalu + qtyBaru;
+      
+      syncRowText(elem);
+    }
+
+    // MEMUAT DAN MENAMPILKAN TABEL RIWAYAT ORDER TERAKHIR (Otomatis Hilang jika sudah ditagih)
+    function renderLastOrderTable() {
+      let rawReseller = document.getElementById('sel_reseller').value;
+      let targetReseller = cleanResellerName(rawReseller);
+      let box = document.getElementById('box_last_order');
+      let tbody = document.getElementById('tb_last_order_body');
+
+      if (!targetReseller) {
+        box.style.display = 'none';
+        return;
+      }
+
+      let orders = JSON.parse(localStorage.getItem('sys_orders')) || [];
+      let tagihanList = JSON.parse(localStorage.getItem('sys_penagihan')) || [];
+
+      let lastTagihan = tagihanList.filter(t => cleanResellerName(t.reseller) === targetReseller).pop();
+      let tagihanTime = lastTagihan && lastTagihan.timestamp ? lastTagihan.timestamp : (lastTagihan ? new Date(lastTagihan.tanggal).getTime() : 0);
+
+      let unbilledOrders = orders.filter(o => {
+        let oTime = o.timestamp ? o.timestamp : new Date(o.tgl).getTime();
+        return cleanResellerName(o.reseller) === targetReseller && oTime > tagihanTime;
+      });
+
+      let lastOrder = unbilledOrders.pop();
+
+      if (lastOrder && lastOrder.items && lastOrder.items.length > 0) {
+        box.style.display = 'block';
+        document.getElementById('last_order_date').innerText = 'Tanggal Order: ' + lastOrder.tgl;
+        
+        tbody.innerHTML = lastOrder.items.map((item, index) => `
+          <tr>
+            <td>${index + 1}</td>
+            <td style="text-align:left;"><b>${item.jenis}</b></td>
+            <td>${item.sisaLalu} Pcs</td>
+            <td><b style="color:#16a34a;">+${item.qtyBaru} Pcs</b></td>
+            <td><b>${item.totalStok} Pcs</b></td>
+          </tr>
+        `).join('');
+      } else {
+        box.style.display = 'none';
+      }
+    }
+
+    function simpanOrder(showAlert = false) {
+      let tgl = document.getElementById('tgl_order').value;
+      let reseller = document.getElementById('sel_reseller').value;
+      if (!tgl || !reseller) {
+        if (showAlert) alert('Lengkapi Tanggal dan Reseller!');
+        return false;
+      }
+
+      let items = [];
+      document.querySelectorAll('.item-row').forEach(tr => {
+        let jenis = tr.querySelector('.sel-vch').value;
+        let sisaLalu = parseFloat(tr.querySelector('.sisa-lalu').value) || 0;
+        let qtyBaru = parseFloat(tr.querySelector('.qty-baru').value) || 0;
+        let totalStok = parseFloat(tr.querySelector('.total-stok').value) || 0;
+        if (jenis && (qtyBaru > 0 || totalStok > 0)) {
+          items.push({ jenis, sisaLalu, qtyBaru, totalStok });
+        }
+      });
+
+      if (items.length === 0) {
+        if (showAlert) alert('Pilih minimal 1 jenis voucher!');
+        return false;
+      }
+
+      let orderList = JSON.parse(localStorage.getItem('sys_orders')) || [];
+      orderList.push({ 
+        tgl, 
+        reseller, 
+        items, 
+        timestamp: new Date().getTime() 
+      });
+      localStorage.setItem('sys_orders', JSON.stringify(orderList));
+      
+      if (showAlert) alert('Order Penitipan Voucher Berhasil Disimpan!');
+      renderLastOrderTable();
+      return true;
+    }
+
+    function prosesCetak() {
+      syncPrintHeader();
+      document.querySelectorAll('.item-row').forEach(tr => syncRowText(tr.querySelector('.sel-vch')));
+      simpanOrder(false);
+      window.print();
+    }
+
+    window.onload = initPage;
+  </script>
+</body>
+</html>

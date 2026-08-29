@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Rekapitulasi Penjualan - Sistem Voucher</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    body { display: flex; background: #f4f6f9; min-height: 100vh; }
+    .sidebar { width: 230px; background: #1e293b; color: #fff; padding: 20px 0; flex-shrink: 0; }
+    .sidebar h3 { text-align: center; margin-bottom: 25px; color: #38bdf8; font-size: 16px; }
+    .menu-item { display: block; padding: 12px 20px; color: #cbd5e1; text-decoration: none; font-size: 14px; }
+    .menu-item:hover, .menu-item.active { background: #334155; color: #fff; border-left: 4px solid #38bdf8; }
+    .content { flex: 1; padding: 25px; }
+    .card { background: white; padding: 25px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    
+    .filter-box { display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+    .form-group { flex: 1; min-width: 180px; }
+    .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; }
+    .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+    
+    .summary-cards { display: flex; gap: 15px; margin-bottom: 20px; }
+    .summary-card { flex: 1; background: #f1f5f9; border-left: 4px solid #0284c7; padding: 15px; border-radius: 4px; }
+    .summary-card h4 { font-size: 12px; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+    .summary-card p { font-size: 20px; font-weight: bold; color: #0f172a; }
+
+    .btn { background: #0284c7; color: white; padding: 9px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; }
+    .btn:hover { background: #0369a1; }
+    .btn-print { background: #16a34a; }
+    .btn-print:hover { background: #15803d; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: center; }
+    th { background: #e2e8f0; }
+
+    @media print {
+      .sidebar, .filter-box, .btn, h2 { display: none !important; }
+      body, .content, .card { background: none; padding: 0; margin: 0; box-shadow: none; }
+      .printable-report { border: 1px solid #000; padding: 15px; }
+    }
+		/* Styling Khusus Tampilan Handphone / Layar Kecil */
+	@media screen and (max-width: 768px) {
+	  body {
+		flex-direction: column; /* Mengubah sidebar & konten dari samping ke atas-bawah */
+	  }
+	  
+	  .sidebar {
+		width: 100% !important;
+		padding: 10px 0;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+	  }
+	  
+	  .sidebar h3 {
+		width: 100%;
+		margin-bottom: 10px;
+		font-size: 14px;
+	  }
+	  
+	  .menu-item {
+		padding: 8px 10px;
+		font-size: 12px;
+		border-left: none !important;
+		border-bottom: 2px solid transparent;
+	  }
+	  
+	  .menu-item:hover, .menu-item.active {
+		border-bottom: 2px solid #38bdf8;
+		background: #334155;
+	  }
+	  
+	  .content {
+		padding: 10px;
+	  }
+	  
+	  .card {
+		padding: 15px;
+	  }
+	  
+	  .form-group input, .form-group select {
+		max-width: 100% !important; /* Form memenuhi lebar layar HP */
+	  }
+	  
+	  /* Membuat Tabel Bisa Di-scroll Kesamping jika Terlalu Lebar */
+	  table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+	  }
+
+	  .summary-cards {
+		flex-direction: column; /* Kartu statistik disusun ke bawah */
+	  }
+	}
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigasi -->
+  <nav class="sidebar">
+    <h3>VOUCHER SYSTEM</h3>
+    <a href="reseller.html" class="menu-item">Master Reseller & Harga</a>
+    <a href="order.html" class="menu-item">Input & Cetak Order Baru</a>
+    <a href="penagihan.html" class="menu-item">Penagihan Bulanan</a>
+    <a href="cetak_tagihan.html" class="menu-item">Cetak Tagihan</a>
+    <a href="rekapitulasi.html" class="menu-item active">Rekapitulasi Penjualan</a>
+  </nav>
+
+  <main class="content">
+    <div class="card printable-report">
+      <h2>Laporan Rekapitulasi Penjualan</h2><br>
+
+      <!-- Panel Filter -->
+      <div class="filter-box">
+        <div class="form-group">
+          <label>Pilih Reseller</label>
+          <select id="filter_reseller">
+            <option value="ALL">-- Semua Reseller (ALL) --</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Dari Tanggal</label>
+          <input type="date" id="filter_tgl_mulai">
+        </div>
+        <div class="form-group">
+          <label>Sampai Tanggal</label>
+          <input type="date" id="filter_tgl_selesai">
+        </div>
+        <div>
+          <button class="btn" onclick="tampilkanRekap()">Tampilkan Rekap</button>
+          <button class="btn btn-print" onclick="window.print()">Cetak Laporan</button>
+        </div>
+      </div>
+
+      <!-- Ringkasan Statistik -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <h4>Total Transaksi Penagihan</h4>
+          <p id="stat_total_trx">0 Trx</p>
+        </div>
+        <div class="summary-card">
+          <h4>Total Voucher Laku</h4>
+          <p id="stat_total_laku">0 Pcs</p>
+        </div>
+        <div class="summary-card" style="border-left-color: #16a34a;">
+          <h4>Total Pendapatan Diterima</h4>
+          <p id="stat_total_pendapatan">Rp 0</p>
+        </div>
+      </div>
+
+      <!-- Tabel Detail Rekapitulasi -->
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Tanggal Tagihan</th>
+            <th>Nama Reseller</th>
+            <th>Detail Jenis Voucher</th>
+            <th>Total Stok Dititip</th>
+            <th>Voucher Laku</th>
+            <th>Sisa Voucher</th>
+            <th>Total Pendapatan</th>
+          </tr>
+        </thead>
+        <tbody id="tb_rekap">
+          <tr><td colspan="8">Silakan atur filter dan klik tombol "Tampilkan Rekap"</td></tr>
+        </tbody>
+        <tfoot>
+          <tr style="font-weight: bold; background: #f8fafc;">
+            <td colspan="5" style="text-align: right;">TOTAL KESELURUHAN:</td>
+            <td id="foot_laku">0 Pcs</td>
+            <td id="foot_sisa">0 Pcs</td>
+            <td id="foot_pendapatan">Rp 0</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    function cleanResellerName(name) {
+      if (!name) return "";
+      return name.split('(')[0].trim().toLowerCase();
+    }
+
+    function initPage() {
+      // Set default tanggal ke bulan berjalan
+      let date = new Date();
+      let firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+      
+      document.getElementById('filter_tgl_mulai').valueAsDate = firstDay;
+      document.getElementById('filter_tgl_selesai').valueAsDate = date;
+
+      // Populate Pilihan Reseller
+      let resList = JSON.parse(localStorage.getItem('sys_reseller')) || [];
+      let sel = document.getElementById('filter_reseller');
+      resList.forEach(r => {
+        let opt = document.createElement('option');
+        opt.value = r.nama;
+        opt.textContent = r.nama + ' (' + r.lokasi + ')';
+        sel.appendChild(opt);
+      });
+
+      tampilkanRekap();
+    }
+
+    function tampilkanRekap() {
+      let selectedReseller = document.getElementById('filter_reseller').value;
+      let tglMulai = document.getElementById('filter_tgl_mulai').value;
+      let tglSelesai = document.getElementById('filter_tgl_selesai').value;
+
+      let tagihanList = JSON.parse(localStorage.getItem('sys_penagihan')) || [];
+
+      // Filter berdasarkan Tanggal dan Reseller
+      let filteredData = tagihanList.filter(item => {
+        let tglTagihan = item.tanggal;
+        let matchTanggal = true;
+        if (tglMulai && tglTagihan < tglMulai) matchTanggal = false;
+        if (tglSelesai && tglTagihan > tglSelesai) matchTanggal = false;
+
+        let matchReseller = true;
+        if (selectedReseller !== 'ALL') {
+          matchReseller = (cleanResellerName(item.reseller) === cleanResellerName(selectedReseller));
+        }
+
+        return matchTanggal && matchReseller;
+      });
+
+      let tbody = document.getElementById('tb_rekap');
+      if (filteredData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Tidak ada data penagihan sesuai filter.</td></tr>';
+        document.getElementById('stat_total_trx').innerText = '0 Trx';
+        document.getElementById('stat_total_laku').innerText = '0 Pcs';
+        document.getElementById('stat_total_pendapatan').innerText = 'Rp 0';
+        document.getElementById('foot_laku').innerText = '0 Pcs';
+        document.getElementById('foot_sisa').innerText = '0 Pcs';
+        document.getElementById('foot_pendapatan').innerText = 'Rp 0';
+        return;
+      }
+
+      let grandTotalLaku = 0;
+      let grandTotalSisa = 0;
+      let grandTotalPendapatan = 0;
+
+      tbody.innerHTML = filteredData.map((trx, index) => {
+        let totalStokTrx = 0;
+        let totalLakuTrx = 0;
+        let totalSisaTrx = 0;
+        
+        let detailVoucherStr = trx.items.map(i => {
+          totalStokTrx += i.totalStok;
+          totalLakuTrx += i.laku;
+          totalSisaTrx += i.sisa;
+          return `${i.jenis} (Laku: ${i.laku}/${i.totalStok})`;
+        }).join('<br>');
+
+        grandTotalLaku += totalLakuTrx;
+        grandTotalSisa += totalSisaTrx;
+        grandTotalPendapatan += (trx.totalDiterima || 0);
+
+        return `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${trx.tanggal}</td>
+            <td><b>${trx.reseller}</b></td>
+            <td style="text-align:left;">${detailVoucherStr}</td>
+            <td>${totalStokTrx} Pcs</td>
+            <td><b style="color:#16a34a;">${totalLakuTrx} Pcs</b></td>
+            <td>${totalSisaTrx} Pcs</td>
+            <td><b>Rp ${(trx.totalDiterima || 0).toLocaleString('id-ID')}</b></td>
+          </tr>
+        `;
+      }).join('');
+
+      // Update Ringkasan Kartu & Tfoot
+      document.getElementById('stat_total_trx').innerText = filteredData.length + ' Trx';
+      document.getElementById('stat_total_laku').innerText = grandTotalLaku.toLocaleString('id-ID') + ' Pcs';
+      document.getElementById('stat_total_pendapatan').innerText = 'Rp ' + grandTotalPendapatan.toLocaleString('id-ID');
+
+      document.getElementById('foot_laku').innerText = grandTotalLaku.toLocaleString('id-ID') + ' Pcs';
+      document.getElementById('foot_sisa').innerText = grandTotalSisa.toLocaleString('id-ID') + ' Pcs';
+      document.getElementById('foot_pendapatan').innerText = 'Rp ' + grandTotalPendapatan.toLocaleString('id-ID');
+    }
+
+    window.onload = initPage;
+  </script>
+</body>
+</html>

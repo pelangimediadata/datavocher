@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Master Reseller & Harga - Sistem Voucher</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    body { display: flex; background: #f4f6f9; min-height: 100vh; }
+    .sidebar { width: 230px; background: #1e293b; color: #fff; padding: 20px 0; flex-shrink: 0; }
+    .sidebar h3 { text-align: center; margin-bottom: 25px; color: #38bdf8; font-size: 16px; }
+    .menu-item { display: block; padding: 12px 20px; color: #cbd5e1; text-decoration: none; font-size: 14px; }
+    .menu-item:hover, .menu-item.active { background: #334155; color: #fff; border-left: 4px solid #38bdf8; }
+    .content { flex: 1; padding: 25px; }
+    .card { background: white; padding: 25px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+    .card-header h2 { font-size: 18px; color: #1e293b; margin: 0; }
+    
+    .form-container { background: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 4px; }
+    .form-group input { width: 100%; max-width: 350px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+    
+    /* Styles Tombol */
+    .btn { background: #0284c7; color: white; padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; }
+    .btn:hover { background: #0369a1; }
+    .btn-add { background: #16a34a; }
+    .btn-add:hover { background: #15803d; }
+    .btn-warning { background: #d97706; }
+    .btn-warning:hover { background: #b45309; }
+    .btn-edit { background: #eab308; color: #000; padding: 4px 8px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-edit:hover { background: #ca8a04; color: white; }
+    .btn-delete { background: #dc2626; color: white; padding: 4px 8px; font-size: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    .btn-delete:hover { background: #b91c1c; }
+    .btn-cancel { background: #64748b; color: white; padding: 8px 14px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; margin-left: 5px; }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
+    th { background: #e2e8f0; }
+    td.center { text-align: center; }
+		/* Styling Khusus Tampilan Handphone / Layar Kecil */
+	@media screen and (max-width: 768px) {
+	  body {
+		flex-direction: column; /* Mengubah sidebar & konten dari samping ke atas-bawah */
+	  }
+	  
+	  .sidebar {
+		width: 100% !important;
+		padding: 10px 0;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+	  }
+	  
+	  .sidebar h3 {
+		width: 100%;
+		margin-bottom: 10px;
+		font-size: 14px;
+	  }
+	  
+	  .menu-item {
+		padding: 8px 10px;
+		font-size: 12px;
+		border-left: none !important;
+		border-bottom: 2px solid transparent;
+	  }
+	  
+	  .menu-item:hover, .menu-item.active {
+		border-bottom: 2px solid #38bdf8;
+		background: #334155;
+	  }
+	  
+	  .content {
+		padding: 10px;
+	  }
+	  
+	  .card {
+		padding: 15px;
+	  }
+	  
+	  .form-group input, .form-group select {
+		max-width: 100% !important; /* Form memenuhi lebar layar HP */
+	  }
+	  
+	  /* Membuat Tabel Bisa Di-scroll Kesamping jika Terlalu Lebar */
+	  table {
+		display: block;
+		overflow-x: auto;
+		white-space: nowrap;
+	  }
+
+	  .summary-cards {
+		flex-direction: column; /* Kartu statistik disusun ke bawah */
+	  }
+	}
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <h3>VOUCHER SYSTEM</h3>
+    <a href="reseller.html" class="menu-item active">Master Reseller & Harga</a>
+    <a href="order.html" class="menu-item">Input & Cetak Order Baru</a>
+    <a href="penagihan.html" class="menu-item">Penagihan Bulanan</a>
+    <a href="cetak_tagihan.html" class="menu-item">Cetak Tagihan</a>
+	<a href="rekapitulasi.html" class="menu-item">Rekapitulasi Penjualan</a>
+  </nav>
+
+  <main class="content">
+    <!-- 1. MASTER DATA RESELLER -->
+    <div class="card">
+      <div class="card-header">
+        <h2 id="title_reseller">Master Data Reseller</h2>
+        <button class="btn btn-add" id="btn_tambah_reseller" onclick="bukaFormReseller()">+ Tambah Reseller</button>
+      </div>
+
+      <!-- Form Reseller (Default Tersembunyi) -->
+      <div class="form-container" id="form_reseller_box" style="display:none;">
+        <input type="hidden" id="r_edit_index" value="-1">
+        <div class="form-group"><label>Nama Reseller</label><input type="text" id="r_nama" placeholder="Contoh: Toko Berkah"></div>
+        <div class="form-group"><label>Lokasi / Tempat</label><input type="text" id="r_lokasi" placeholder="Contoh: Pos 1 / Blok A"></div>
+        <div class="form-group"><label>No. WhatsApp</label><input type="text" id="r_hp" placeholder="08xxxxxxxxxx"></div>
+        
+        <button class="btn" id="btn_simpan_reseller" onclick="simpanReseller()">Simpan Data</button>
+        <button class="btn-cancel" onclick="tutupFormReseller()">Batal</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Reseller</th>
+            <th>Lokasi</th>
+            <th>No HP</th>
+            <th style="width: 130px; text-align:center;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabel_reseller"></tbody>
+      </table>
+    </div>
+
+    <!-- 2. MASTER HARGA VOUCHER -->
+    <div class="card">
+      <div class="card-header">
+        <h2 id="title_voucher">Master Harga Voucher (Jual vs Modal)</h2>
+        <button class="btn btn-add" id="btn_tambah_voucher" onclick="bukaFormVoucher()">+ Tambah Jenis Voucher</button>
+      </div>
+
+      <!-- Form Harga Voucher (Default Tersembunyi) -->
+      <div class="form-container" id="form_voucher_box" style="display:none;">
+        <input type="hidden" id="v_edit_index" value="-1">
+        <div class="form-group"><label>Nama / Jenis Paket Voucher</label><input type="text" id="v_jenis" placeholder="Contoh: Voucher 6 Jam_5000"></div>
+        <div class="form-group"><label>Harga Jual ke Konsumen (Rp)</label><input type="number" id="v_jual" placeholder="5000"></div>
+        <div class="form-group"><label>Harga Modal / Setor Reseller (Rp)</label><input type="number" id="v_modal" placeholder="4500"></div>
+        
+        <button class="btn" id="btn_simpan_voucher" onclick="simpanHarga()">Simpan Data</button>
+        <button class="btn-cancel" onclick="tutupFormVoucher()">Batal</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Jenis Voucher</th>
+            <th>Harga Jual</th>
+            <th>Harga Modal</th>
+            <th>Margin/Profit</th>
+            <th style="width: 130px; text-align:center;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabel_harga"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    // --- FITUR KONTROL DATA RESELLER ---
+    function renderReseller() {
+      let res = JSON.parse(localStorage.getItem('sys_reseller')) || [];
+      let tbR = document.getElementById('tabel_reseller');
+      if (res.length === 0) {
+        tbR.innerHTML = '<tr><td colspan="5" style="text-align:center;">Belum ada data reseller</td></tr>';
+        return;
+      }
+      tbR.innerHTML = res.map((item, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${item.nama}</td>
+          <td>${item.lokasi}</td>
+          <td>${item.hp || '-'}</td>
+          <td class="center">
+            <button class="btn-edit" onclick="editReseller(${i})">Edit</button>
+            <button class="btn-delete" onclick="hapusReseller(${i})">Hapus</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function bukaFormReseller() {
+      document.getElementById('form_reseller_box').style.display = 'block';
+      document.getElementById('r_nama').focus();
+    }
+
+    function tutupFormReseller() {
+      document.getElementById('r_nama').value = '';
+      document.getElementById('r_lokasi').value = '';
+      document.getElementById('r_hp').value = '';
+      document.getElementById('r_edit_index').value = -1;
+
+      document.getElementById('title_reseller').innerText = "Master Data Reseller";
+      let btnSimpan = document.getElementById('btn_simpan_reseller');
+      btnSimpan.innerText = "Simpan Data";
+      btnSimpan.classList.remove('btn-warning');
+      document.getElementById('form_reseller_box').style.display = 'none';
+    }
+
+    function simpanReseller() {
+      let nama = document.getElementById('r_nama').value.trim();
+      let lokasi = document.getElementById('r_lokasi').value.trim();
+      let hp = document.getElementById('r_hp').value.trim();
+      let editIndex = parseInt(document.getElementById('r_edit_index').value);
+
+      if (!nama || !lokasi) return alert('Nama dan Lokasi wajib diisi!');
+      
+      let list = JSON.parse(localStorage.getItem('sys_reseller')) || [];
+
+      if (editIndex >= 0) {
+        list[editIndex] = { nama, lokasi, hp };
+        alert('Data Reseller berhasil diperbarui!');
+      } else {
+        list.push({ nama, lokasi, hp });
+        alert('Reseller baru berhasil ditambahkan!');
+      }
+
+      localStorage.setItem('sys_reseller', JSON.stringify(list));
+      tutupFormReseller();
+      renderReseller();
+    }
+
+    function editReseller(index) {
+      let list = JSON.parse(localStorage.getItem('sys_reseller')) || [];
+      let item = list[index];
+      if (!item) return;
+
+      bukaFormReseller();
+      document.getElementById('r_nama').value = item.nama;
+      document.getElementById('r_lokasi').value = item.lokasi;
+      document.getElementById('r_hp').value = item.hp || '';
+      document.getElementById('r_edit_index').value = index;
+
+      document.getElementById('title_reseller').innerText = "Edit Data Reseller";
+      let btnSimpan = document.getElementById('btn_simpan_reseller');
+      btnSimpan.innerText = "Update Data";
+      btnSimpan.classList.add('btn-warning');
+    }
+
+    function hapusReseller(index) {
+      if (confirm('Apakah Anda yakin ingin menghapus reseller ini?')) {
+        let list = JSON.parse(localStorage.getItem('sys_reseller')) || [];
+        list.splice(index, 1);
+        localStorage.setItem('sys_reseller', JSON.stringify(list));
+        renderReseller();
+      }
+    }
+
+
+    // --- FITUR KONTROL MASTER HARGA VOUCHER ---
+    function renderHarga() {
+      let vch = JSON.parse(localStorage.getItem('sys_voucher')) || [];
+      let tbV = document.getElementById('tabel_harga');
+      if (vch.length === 0) {
+        tbV.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada data harga voucher</td></tr>';
+        return;
+      }
+      tbV.innerHTML = vch.map((item, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${item.jenis}</td>
+          <td>Rp ${item.jual.toLocaleString('id-ID')}</td>
+          <td>Rp ${item.modal.toLocaleString('id-ID')}</td>
+          <td>Rp ${(item.jual - item.modal).toLocaleString('id-ID')}</td>
+          <td class="center">
+            <button class="btn-edit" onclick="editHarga(${i})">Edit</button>
+            <button class="btn-delete" onclick="hapusHarga(${i})">Hapus</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function bukaFormVoucher() {
+      document.getElementById('form_voucher_box').style.display = 'block';
+      document.getElementById('v_jenis').focus();
+    }
+
+    function tutupFormVoucher() {
+      document.getElementById('v_jenis').value = '';
+      document.getElementById('v_jual').value = '';
+      document.getElementById('v_modal').value = '';
+      document.getElementById('v_edit_index').value = -1;
+
+      document.getElementById('title_voucher').innerText = "Master Harga Voucher (Jual vs Modal)";
+      let btnSimpan = document.getElementById('btn_simpan_voucher');
+      btnSimpan.innerText = "Simpan Data";
+      btnSimpan.classList.remove('btn-warning');
+      document.getElementById('form_voucher_box').style.display = 'none';
+    }
+
+    function simpanHarga() {
+      let jenis = document.getElementById('v_jenis').value.trim();
+      let jual = parseFloat(document.getElementById('v_jual').value) || 0;
+      let modal = parseFloat(document.getElementById('v_modal').value) || 0;
+      let editIndex = parseInt(document.getElementById('v_edit_index').value);
+
+      if (!jenis || jual <= 0) return alert('Data Jenis Voucher dan Harga Jual wajib diisi!');
+
+      let list = JSON.parse(localStorage.getItem('sys_voucher')) || [];
+
+      if (editIndex >= 0) {
+        list[editIndex] = { jenis, jual, modal, margin: jual - modal };
+        alert('Data Harga Voucher berhasil diperbarui!');
+      } else {
+        list.push({ jenis, jual, modal, margin: jual - modal });
+        alert('Jenis Voucher baru berhasil ditambahkan!');
+      }
+
+      localStorage.setItem('sys_voucher', JSON.stringify(list));
+      tutupFormVoucher();
+      renderHarga();
+    }
+
+    function editHarga(index) {
+      let list = JSON.parse(localStorage.getItem('sys_voucher')) || [];
+      let item = list[index];
+      if (!item) return;
+
+      bukaFormVoucher();
+      document.getElementById('v_jenis').value = item.jenis;
+      document.getElementById('v_jual').value = item.jual;
+      document.getElementById('v_modal').value = item.modal;
+      document.getElementById('v_edit_index').value = index;
+
+      document.getElementById('title_voucher').innerText = "Edit Master Harga Voucher";
+      let btnSimpan = document.getElementById('btn_simpan_voucher');
+      btnSimpan.innerText = "Update Data";
+      btnSimpan.classList.add('btn-warning');
+    }
+
+    function hapusHarga(index) {
+      if (confirm('Apakah Anda yakin ingin menghapus paket voucher ini?')) {
+        let list = JSON.parse(localStorage.getItem('sys_voucher')) || [];
+        list.splice(index, 1);
+        localStorage.setItem('sys_voucher', JSON.stringify(list));
+        renderHarga();
+      }
+    }
+
+    // Inisialisasi awal saat halaman dibuka
+    window.onload = function() {
+      renderReseller();
+      renderHarga();
+    };
+  </script>
+</body>
+</html>
