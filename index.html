@@ -38,62 +38,62 @@
     th, td { border: 1px solid #cbd5e1; padding: 8px; text-align: left; }
     th { background: #e2e8f0; }
     td.center { text-align: center; }
-		/* Styling Khusus Tampilan Handphone / Layar Kecil */
-	@media screen and (max-width: 768px) {
-	  body {
-		flex-direction: column; /* Mengubah sidebar & konten dari samping ke atas-bawah */
-	  }
-	  
-	  .sidebar {
-		width: 100% !important;
-		padding: 10px 0;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		align-items: center;
-	  }
-	  
-	  .sidebar h3 {
-		width: 100%;
-		margin-bottom: 10px;
-		font-size: 14px;
-	  }
-	  
-	  .menu-item {
-		padding: 8px 10px;
-		font-size: 12px;
-		border-left: none !important;
-		border-bottom: 2px solid transparent;
-	  }
-	  
-	  .menu-item:hover, .menu-item.active {
-		border-bottom: 2px solid #38bdf8;
-		background: #334155;
-	  }
-	  
-	  .content {
-		padding: 10px;
-	  }
-	  
-	  .card {
-		padding: 15px;
-	  }
-	  
-	  .form-group input, .form-group select {
-		max-width: 100% !important; /* Form memenuhi lebar layar HP */
-	  }
-	  
-	  /* Membuat Tabel Bisa Di-scroll Kesamping jika Terlalu Lebar */
-	  table {
-		display: block;
-		overflow-x: auto;
-		white-space: nowrap;
-	  }
 
-	  .summary-cards {
-		flex-direction: column; /* Kartu statistik disusun ke bawah */
-	  }
-	}
+    /* Styling Khusus Tampilan Handphone / Layar Kecil */
+    @media screen and (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      
+      .sidebar {
+        width: 100% !important;
+        padding: 10px 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .sidebar h3 {
+        width: 100%;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+      
+      .menu-item {
+        padding: 8px 10px;
+        font-size: 12px;
+        border-left: none !important;
+        border-bottom: 2px solid transparent;
+      }
+      
+      .menu-item:hover, .menu-item.active {
+        border-bottom: 2px solid #38bdf8;
+        background: #334155;
+      }
+      
+      .content {
+        padding: 10px;
+      }
+      
+      .card {
+        padding: 15px;
+      }
+      
+      .form-group input, .form-group select {
+        max-width: 100% !important;
+      }
+      
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .summary-cards {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
@@ -103,7 +103,7 @@
     <a href="order.html" class="menu-item">Input & Cetak Order Baru</a>
     <a href="penagihan.html" class="menu-item">Penagihan Bulanan</a>
     <a href="cetak_tagihan.html" class="menu-item">Cetak Tagihan</a>
-	<a href="rekapitulasi.html" class="menu-item">Rekapitulasi Penjualan</a>
+    <a href="rekapitulasi.html" class="menu-item">Rekapitulasi Penjualan</a>
   </nav>
 
   <main class="content">
@@ -114,7 +114,6 @@
         <button class="btn btn-add" id="btn_tambah_reseller" onclick="bukaFormReseller()">+ Tambah Reseller</button>
       </div>
 
-      <!-- Form Reseller (Default Tersembunyi) -->
       <div class="form-container" id="form_reseller_box" style="display:none;">
         <input type="hidden" id="r_edit_index" value="-1">
         <div class="form-group"><label>Nama Reseller</label><input type="text" id="r_nama" placeholder="Contoh: Toko Berkah"></div>
@@ -146,7 +145,6 @@
         <button class="btn btn-add" id="btn_tambah_voucher" onclick="bukaFormVoucher()">+ Tambah Jenis Voucher</button>
       </div>
 
-      <!-- Form Harga Voucher (Default Tersembunyi) -->
       <div class="form-container" id="form_voucher_box" style="display:none;">
         <input type="hidden" id="v_edit_index" value="-1">
         <div class="form-group"><label>Nama / Jenis Paket Voucher</label><input type="text" id="v_jenis" placeholder="Contoh: Voucher 6 Jam_5000"></div>
@@ -174,7 +172,6 @@
   </main>
 
   <script>
-    // --- FITUR KONTROL DATA RESELLER ---
     function renderReseller() {
       let res = JSON.parse(localStorage.getItem('sys_reseller')) || [];
       let tbR = document.getElementById('tabel_reseller');
@@ -263,8 +260,6 @@
       }
     }
 
-
-    // --- FITUR KONTROL MASTER HARGA VOUCHER ---
     function renderHarga() {
       let vch = JSON.parse(localStorage.getItem('sys_voucher')) || [];
       let tbV = document.getElementById('tabel_harga');
@@ -354,7 +349,6 @@
       }
     }
 
-    // Inisialisasi awal saat halaman dibuka
     window.onload = function() {
       renderReseller();
       renderHarga();
